@@ -12,43 +12,59 @@ const sftpConfig = {
   password: '$or14n4$F',
 };
 
+function logWithTime(message) {
+  const now = new Date();
+  const time = now.toISOString().split('T')[1].split('.')[0]; // HH:MM:SS
+  console.log(`[${time}] ${message}`);
+}
+
 async function checkUrl(name, url) {
-  console.log(`🌐 Verificando ${name}: ${url}`);
+  const start = Date.now();
+  logWithTime(`🌐 Verificando ${name}: ${url}`);
   try {
     const response = await axios.get(url, { timeout: 5000 });
+    const duration = ((Date.now() - start) / 1000).toFixed(2);
     if (response.status === 200) {
-      console.log(`✅ ${name} conectado correctamente`);
+      logWithTime(`✅ ${name} respondió correctamente en ${duration}s`);
     } else {
-      console.warn(`⚠️ ${name} respondió con código: ${response.status}`);
+      logWithTime(`⚠️ ${name} respondió con código: ${response.status} en ${duration}s`);
     }
   } catch (err) {
-    console.error(`❌ Error en ${name}: ${err.message}`);
+    const duration = ((Date.now() - start) / 1000).toFixed(2);
+    logWithTime(`❌ Error en ${name} (${duration}s): ${err.message}`);
   }
 }
 
 async function checkSftpConnection(config) {
-  console.log('🔌 Verificando conexión SFTP...');
+  const start = Date.now();
+  logWithTime('🔌 Verificando conexión SFTP...');
   try {
     await sftp.connect(config);
-    console.log('✅ Conectado al servidor SFTP');
+    logWithTime('✅ Conectado al servidor SFTP');
     const list = await sftp.list('/');
-    console.log('📂 Directorio raíz del SFTP:', list.map(f => f.name));
+    logWithTime(`📂 Directorio raíz del SFTP contiene ${list.length} elementos`);
   } catch (err) {
-    console.error('❌ Error en conexión SFTP:', err.message);
+    logWithTime(`❌ Error en conexión SFTP: ${err.message}`);
   } finally {
     await sftp.end();
-    console.log('🔒 Conexión SFTP cerrada');
+    logWithTime('🔒 Conexión SFTP cerrada');
+    const duration = ((Date.now() - start) / 1000).toFixed(2);
+    logWithTime(`🕒 Tiempo total conexión SFTP: ${duration}s`);
   }
 }
 
 async function runChecks() {
+  const globalStart = Date.now();
+  logWithTime('🚀 Iniciando validaciones...');
+
   await Promise.all([
     checkUrl('Blob Storage', blobUrl),
     checkUrl('Front Door CDN', frontDoorUrl),
-    checkSftpConnection(sftpConfig)
+    checkSftpConnection(sftpConfig),
   ]);
 
-  console.log('🚀 Validaciones completadas');
+  const totalDuration = ((Date.now() - globalStart) / 1000).toFixed(2);
+  logWithTime(`✅ Todas las validaciones completadas en ${totalDuration}s`);
 }
 
 runChecks();
