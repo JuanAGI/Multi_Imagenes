@@ -5,6 +5,10 @@ const app = express();
 
 console.log('📦 Iniciando app...');
 
+app.get('/', (req, res) => {
+  res.send('✅ App corriendo correctamente');
+});
+
 const https = require('https');
 
 app.get('/ping', (req, res) => {
