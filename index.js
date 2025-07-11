@@ -1,4 +1,4 @@
-const URL = 'https://imagenes-dycfe9frbkfucsbz.a03.azurefd.net/imagenes/Storage-Imagenes_QA.jpg';
+const URL = 'https://cdnimagenvenus.blob.core.windows.net/imagenes/Storage-Imagenes_QA.jpg';
 
 async function validateCDNConnection() {
   console.log(`🌐 Verificando conexión a: ${URL}`);
