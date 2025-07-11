@@ -5,13 +5,13 @@ const app = express();
 
 console.log('📦 Iniciando app...');
 
+const https = require('https');
+
 app.get('/ping', (req, res) => {
-  console.log('🔔 Petición a /ping recibida');
-  exec('ping -c 1 google.com', (error, stdout, stderr) => {
-    if (error) {
-      return res.status(500).send(`❌ Error al hacer ping: ${stderr || error.message}`);
-    }
-    res.send(`✅ Respuesta del ping:\n\n${stdout}`);
+  https.get('https://www.google.com', (resp) => {
+    res.send(`✅ Conexión HTTPS exitosa. Código: ${resp.statusCode}`);
+  }).on('error', (err) => {
+    res.status(500).send(`❌ Error al conectar: ${err.message}`);
   });
 });
 
