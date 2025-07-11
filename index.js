@@ -19,10 +19,10 @@ app.get('/sftp-test', async (req, res) => {
   const sftp = new SftpClient();
 
   const config = {
-    host: 'sftp.ejemplo.com',
-    port: 22,
-    username: 'usuario',
-    password: 'tu_contraseña' // o usa una clave privada
+    host: '137.117.83.118',
+    port: 10050,
+    username: 'mercuriosftp',
+    password: '$or14n4$F' // o usa una clave privada
   };
 
   try {
