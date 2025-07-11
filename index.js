@@ -1,29 +1,18 @@
-const SftpClient = require('ssh2-sftp-client');
-const sftp = new SftpClient();
+const URL = 'https://imagenes-dycfe9frbkfucsbz.a03.azurefd.net/imagenes/Storage-Imagenes_QA.jpg';
 
-const config = {
-  host: '137.117.83.118',
-  port: 10050,
-  username: 'mercuriosftp',
-  password: '$or14n4$F'
-};
-
-async function run() {
-  console.log('📦 Iniciando conexión SFTP...');
+async function validateCDNConnection() {
+  console.log(`🌐 Verificando conexión a: ${URL}`);
 
   try {
-    await sftp.connect(config);
-    console.log('✅ Conectado al servidor SFTP');
-
-    const list = await sftp.list('/');
-    console.log('📂 Contenido del directorio raíz:\n', list);
-  } catch (err) {
-    console.error('❌ Error durante la conexión SFTP:', err.message);
-  } finally {
-    await sftp.end();
-    console.log('🔌 Conexión SFTP cerrada');
-    process.exit(0);
+    const res = await fetch(URL, { method: 'GET', timeout: 5000 });
+    if (res.ok) {
+      console.log('✅ Conexión exitosa. Código de estado:', res.status);
+    } else {
+      console.warn('⚠️ Respuesta con error:', res.status);
+    }
+  } catch (error) {
+    console.error('❌ Error al conectar:', error.message);
   }
 }
 
-run();
+validateCDNConnection();
